@@ -1,0 +1,55 @@
+@model EquiposReportes.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar Sesión - Reportes";
+}
+
+<div class="row justify-content-center pt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-3">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <i class="bi bi-shield-lock display-5 text-info"></i>
+                <h4 class="mt-2 mb-0">Módulo de Reportes</h4>
+                <small class="text-secondary">Acceso exclusivo para rol Admin</small>
+            </div>
+            <div class="card-body p-4">
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @Model.ErrorMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <form asp-action="Login" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label fw-semibold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input asp-for="Username" class="form-control" placeholder="Ingrese su usuario admin" autofocus />
+                        </div>
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label fw-semibold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Autenticar contra EquiposAPI
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light text-center small text-muted py-3">
+                <i class="bi bi-info-circle me-1"></i> Este módulo valida credenciales contra la Web API y lee directamente de la base de datos con permisos <code>db_datareader</code>.
+            </div>
+        </div>
+    </div>
+</div>

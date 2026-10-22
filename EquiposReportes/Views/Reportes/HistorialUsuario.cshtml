@@ -1,0 +1,142 @@
+@model EquiposReportes.ViewModels.HistorialUsuarioReportViewModel
+@{
+    ViewData["Title"] = "Historial por Usuario";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill text-info me-2"></i>Historial de Préstamos por Usuario</h2>
+        <span class="text-muted">Consulte la trazabilidad completa de préstamos realizados por un docente o estudiante</span>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+        <i class="bi bi-printer me-1"></i> Imprimir Reporte
+    </button>
+</div>
+
+<!-- Barra de búsqueda por Username -->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body bg-light rounded-3">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label fw-semibold">Nombre de Usuario (Username exacto o aproximado):</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Ej. estudiante1, docente1, admin..." value="@Model.Username" required />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-info text-white w-100">
+                    <i class="bi bi-search me-1"></i> Buscar Historial
+                </button>
+            </div>
+            <div class="col-md-1">
+                <a asp-action="HistorialUsuario" class="btn btn-outline-secondary w-100" title="Limpiar">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.BusquedaRealizada)
+{
+    if (Model.UsuarioExiste)
+    {
+        <!-- Resumen del Usuario Encontrado -->
+        <div class="card shadow-sm mb-4 border-start border-4 border-info">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="fw-bold mb-1"><i class="bi bi-person-badge me-2 text-info"></i>@Model.UsuarioNombre</h4>
+                        <div class="text-muted">
+                            <span class="me-3"><i class="bi bi-envelope me-1"></i>@Model.UsuarioEmail</span>
+                            <span><i class="bi bi-shield-check me-1"></i>Rol: <strong>@Model.UsuarioRol</strong></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+                            <i class="bi bi-journal-check me-1"></i> Total Préstamos: @Model.TotalPrestamos
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Préstamos del Usuario -->
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th># Préstamo</th>
+                            <th>Código Equipo</th>
+                            <th>Equipo</th>
+                            <th>Categoría</th>
+                            <th>Fecha Préstamo</th>
+                            <th>Vencimiento</th>
+                            <th>Fecha Devolución</th>
+                            <th>Estado</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Items.Any())
+                        {
+                            foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td class="fw-bold">#@item.PrestamoId</td>
+                                    <td><code>@item.EquipoCodigo</code></td>
+                                    <td class="fw-semibold">@item.EquipoNombre</td>
+                                    <td><span class="badge bg-secondary">@item.CategoriaNombre</span></td>
+                                    <td>@item.FechaPrestamo.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (item.FechaDevolucion.HasValue)
+                                        {
+                                            <span class="text-success"><i class="bi bi-check2 me-1"></i>@item.FechaDevolucion.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic">Pendiente</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.EstadoPrestamo == "Devuelto")
+                                        {
+                                            <span class="badge bg-success">Devuelto</span>
+                                        }
+                                        else if (item.EstadoPrestamo == "Vencido")
+                                        {
+                                            <span class="badge bg-danger">Vencido</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary">Vigente</span>
+                                        }
+                                    </td>
+                                    <td><small class="text-muted">@(string.IsNullOrWhiteSpace(item.Observaciones) ? "—" : item.Observaciones)</small></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">
+                                    El usuario no tiene ningún préstamo registrado en su historial.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center py-4 shadow-sm" role="alert">
+            <i class="bi bi-question-circle fs-2 d-block mb-2"></i>
+            No se encontró ningún usuario con el username <strong>'@Model.Username'</strong> en la base de datos.
+        </div>
+    }
+}

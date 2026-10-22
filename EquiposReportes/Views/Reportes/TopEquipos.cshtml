@@ -1,0 +1,128 @@
+@model EquiposReportes.ViewModels.TopEquiposReportViewModel
+@{
+    ViewData["Title"] = "Top 5 Equipos Más Prestados";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark"><i class="bi bi-trophy-fill text-warning me-2"></i>Top 5 Equipos Más Prestados</h2>
+        <span class="text-muted">Equipos con mayor demanda y rotación en préstamos según el rango de fechas</span>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+        <i class="bi bi-printer me-1"></i> Imprimir Reporte
+    </button>
+</div>
+
+<!-- Filtros -->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body bg-light rounded-3">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Fecha Inicio:</label>
+                <input type="date" name="fechaInicio" class="form-control" value="@(Model.FechaInicio?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Fecha Fin:</label>
+                <input type="date" name="fechaFin" class="form-control" value="@(Model.FechaFin?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Categoría:</label>
+                <select name="categoriaId" class="form-select">
+                    <option value="">-- Todas las categorías --</option>
+                    @foreach (var cat in Model.Categorias)
+                    {
+                        <option value="@cat.Id" selected="@(Model.CategoriaId == cat.Id ? "selected" : null)">@cat.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel me-1"></i> Filtrar Top
+                </button>
+            </div>
+            <div class="col-md-1">
+                <a asp-action="TopEquipos" class="btn btn-outline-secondary w-100" title="Limpiar filtros">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabla Top 5 -->
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center" style="width: 80px;">Puesto</th>
+                    <th>Código Inventario</th>
+                    <th>Nombre del Equipo</th>
+                    <th>Categoría</th>
+                    <th>Estado Actual</th>
+                    <th class="text-center">Préstamos Registrados</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Any())
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        var badgeClass = item.Puesto switch
+                        {
+                            1 => "bg-warning text-dark",
+                            2 => "bg-secondary text-white",
+                            3 => "bg-danger text-white",
+                            _ => "bg-light text-dark border"
+                        };
+
+                        var icono = item.Puesto switch
+                        {
+                            1 => "🥇 1°",
+                            2 => "🥈 2°",
+                            3 => "🥉 3°",
+                            _ => $"{item.Puesto}°"
+                        };
+
+                        <tr>
+                            <td class="text-center">
+                                <span class="badge @badgeClass fs-6 px-3 py-2 fw-bold">@icono</span>
+                            </td>
+                            <td><code>@item.EquipoCodigo</code></td>
+                            <td class="fw-bold">@item.EquipoNombre</td>
+                            <td><span class="badge bg-info text-dark">@item.CategoriaNombre</span></td>
+                            <td>
+                                @if (item.EstadoActual == "Disponible")
+                                {
+                                    <span class="badge bg-success">Disponible</span>
+                                }
+                                else if (item.EstadoActual == "Prestado")
+                                {
+                                    <span class="badge bg-warning text-dark">Prestado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Mantenimiento</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-primary px-3 py-2 fs-6">
+                                    <i class="bi bi-arrow-repeat me-1"></i> @item.TotalPrestamos veces
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No se encontraron préstamos registrados en el rango de fechas seleccionado.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
