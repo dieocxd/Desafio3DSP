@@ -1,0 +1,639 @@
+{
+  "info": {
+    "_postman_id": "7d9b23f1-e5a1-4d9b-a320-c9a9b1c78912",
+    "name": "Parcial - Sistema de Préstamo de Equipos UDB (12 Casos de Prueba)",
+    "description": "Colección completa de pruebas de API REST para el parcial de Programación de Servidores Web. Cubre los 12 casos de verificación obligatorios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "docenteToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "estudianteToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "testEquipoId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "testRowVersion",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Caso 1 - Login Correcto (Admin) devuelve Token y Rol",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Token y Rol retornados correctamente\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.token).to.be.a('string');",
+              "    pm.expect(jsonData.rol).to.eql('Admin');",
+              "    pm.collectionVariables.set(\"adminToken\", jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123*!Secure\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Caso 1b - Login Docente (Guarda Token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.collectionVariables.set(\"docenteToken\", jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"docente1\",\n  \"password\": \"Docente123*\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Caso 1c - Login Estudiante (Guarda Token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.collectionVariables.set(\"estudianteToken\", jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"estudiante1\",\n  \"password\": \"Estudiante123*\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Caso 2 - Login con Contraseña Incorrecta devuelve 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"ClaveCompletamenteErronea999\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Caso 3 - Endpoint Protegido sin Token devuelve 401",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos"]
+        }
+      }
+    },
+    {
+      "name": "Caso 4 - Estudiante intenta crear un equipo y recibe 403",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 403 Forbidden\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{estudianteToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigoInventario\": \"HACK-001\",\n  \"nombre\": \"Laptop no autorizada\",\n  \"descripcion\": \"Intento por rol Estudiante\",\n  \"categoriaId\": 1,\n  \"estado\": \"Disponible\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos"]
+        }
+      }
+    },
+    {
+      "name": "Caso 5 - Registrar usuario con Username repetido devuelve 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409 Conflict\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"CualquierClave123*\",\n  \"email\": \"otro_admin@udb.edu.sv\",\n  \"rol\": \"Admin\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Caso 6a - Prestar Equipo Disponible (Éxito inicial)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{docenteToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"equipoId\": 1,\n  \"fechaVencimiento\": \"2026-10-25T00:00:00Z\",\n  \"observaciones\": \"Préstamo para clase práctica\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/prestamos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "prestamos"]
+        }
+      }
+    },
+    {
+      "name": "Caso 6b - Prestar equipo que ya está Prestado devuelve 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409 Conflict\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"equipoId\": 1,\n  \"fechaVencimiento\": \"2026-10-25T00:00:00Z\",\n  \"observaciones\": \"Segundo intento de préstamo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/prestamos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "prestamos"]
+        }
+      }
+    },
+    {
+      "name": "Caso 7 - FechaVencimiento a 15 días es rechazada (400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{docenteToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"equipoId\": 2,\n  \"fechaVencimiento\": \"2026-11-15T00:00:00Z\",\n  \"observaciones\": \"Plazo no permitido de 15 días\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/prestamos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "prestamos"]
+        }
+      }
+    },
+    {
+      "name": "Caso 8 - Eliminar equipo con historial devuelve 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409 Conflict\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos", "1"]
+        }
+      }
+    },
+    {
+      "name": "Caso 9a - Concurrencia Optimista: Obtener Equipo y RowVersion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    pm.collectionVariables.set(\"testRowVersion\", jsonData.rowVersion);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos/2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos", "2"]
+        }
+      }
+    },
+    {
+      "name": "Caso 9b - Concurrencia Optimista: Primera edición exitosa",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 2,\n  \"codigoInventario\": \"LAP-002\",\n  \"nombre\": \"Lenovo ThinkPad E14 - Editado Usuario 1\",\n  \"descripcion\": \"Modificación 1\",\n  \"categoriaId\": 1,\n  \"estado\": \"Disponible\",\n  \"rowVersion\": \"{{testRowVersion}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos/2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos", "2"]
+        }
+      }
+    },
+    {
+      "name": "Caso 9c - Concurrencia Optimista: Segunda edición con versión obsoleta devuelve 409",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409 Conflict por Concurrencia\", function () {",
+              "    pm.response.to.have.status(409);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 2,\n  \"codigoInventario\": \"LAP-002\",\n  \"nombre\": \"Lenovo ThinkPad E14 - Intento Usuario 2\",\n  \"descripcion\": \"Modificación 2 con token viejo\",\n  \"categoriaId\": 1,\n  \"estado\": \"Disponible\",\n  \"rowVersion\": \"{{testRowVersion}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/equipos/2",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "equipos", "2"]
+        }
+      }
+    },
+    {
+      "name": "Caso 10 - Estudiante solo ve sus propios préstamos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    var jsonData = pm.response.json();",
+              "    jsonData.forEach(function(item) {",
+              "        pm.expect(item.usuarioNombre).to.eql('estudiante1');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{estudianteToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/prestamos?usuarioId=1&soloVencidos=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "prestamos"],
+          "query": [
+            {
+              "key": "usuarioId",
+              "value": "1"
+            },
+            {
+              "key": "soloVencidos",
+              "value": "false"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
