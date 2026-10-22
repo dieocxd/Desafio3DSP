@@ -1,0 +1,43 @@
+@model EquiposMVC.Models.CategoriaViewModel
+@{
+    ViewData["Title"] = "Eliminar Categoría";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white py-3">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body p-4">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <p class="lead">¿Está seguro de que desea eliminar la siguiente categoría?</p>
+
+                <div class="bg-light p-3 rounded mb-4">
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted">ID:</div>
+                        <div class="col-sm-8 fw-bold">#@Model.Id</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Nombre:</div>
+                        <div class="col-sm-8 fw-bold text-primary">@Model.Nombre</div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash-fill me-1"></i> Eliminar Definitivamente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

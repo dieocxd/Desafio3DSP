@@ -1,0 +1,81 @@
+@model EquiposMVC.Models.PrestamoCreateViewModel
+@{
+    ViewData["Title"] = "Registrar Préstamo";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-hand-index-thumb-fill me-2"></i>Registrar Nuevo Préstamo</h4>
+                <small class="text-muted">El equipo pasará a estado <strong>Prestado</strong> automáticamente en la misma transacción.</small>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <!-- Mensajes de la API (ej. 409 si el equipo ya está prestado o validación de 7 días) -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="EquipoId" class="form-label fw-semibold"></label>
+                        <select asp-for="EquipoId" class="form-select">
+                            <option value="">-- Seleccionar Equipo Disponible --</option>
+                            @foreach (var eq in Model.EquiposDisponibles)
+                            {
+                                <option value="@eq.Id" selected="@(Model.EquipoId == eq.Id ? "selected" : null)">
+                                    [@eq.CodigoInventario] @eq.Nombre (@eq.CategoriaNombre)
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="EquipoId" class="text-danger small"></span>
+                        @if (!Model.EquiposDisponibles.Any())
+                        {
+                            <small class="text-danger d-block mt-1">No hay equipos disponibles para prestar actualmente.</small>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UsuarioId" class="form-label fw-semibold"></label>
+                        <select asp-for="UsuarioId" class="form-select">
+                            <option value="">-- Seleccionar Usuario Prestatario (o dejar vacío para asignarse a sí mismo) --</option>
+                            @foreach (var u in Model.UsuariosDisponibles)
+                            {
+                                <option value="@u.Id" selected="@(Model.UsuarioId == u.Id ? "selected" : null)">
+                                    @u.Username (@u.Rol) - @u.Email
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="UsuarioId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="FechaVencimiento" class="form-label fw-semibold"></label>
+                        <input asp-for="FechaVencimiento" type="date" class="form-control" 
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" 
+                               max="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="FechaVencimiento" class="text-danger small"></span>
+                        <small class="text-muted d-block">
+                            <i class="bi bi-info-circle me-1"></i>Regla de negocio: Máximo 7 días a partir de hoy.
+                        </small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Observaciones" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Motivo del préstamo, accesorios entregados (cables, cargador), etc."></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary" @(!Model.EquiposDisponibles.Any() ? "disabled" : "")>
+                            <i class="bi bi-check-circle me-1"></i> Confirmar Préstamo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+@model EquiposMVC.Models.EquipoCreateViewModel
+@{
+    ViewData["Title"] = "Registrar Equipo";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-laptop-fill me-2"></i>Registrar Nuevo Equipo</h4>
+                <small class="text-muted">Ingrese la información técnica e inventario del equipo</small>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="CodigoInventario" class="form-label fw-semibold"></label>
+                            <input asp-for="CodigoInventario" class="form-control" placeholder="Ej. LAP-003, PROY-002" autofocus />
+                            <span asp-validation-for="CodigoInventario" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CategoriaId" class="form-label fw-semibold"></label>
+                            <select asp-for="CategoriaId" class="form-select">
+                                <option value="">-- Seleccionar Categoría --</option>
+                                @foreach (var cat in Model.CategoriasDisponibles)
+                                {
+                                    <option value="@cat.Id">@cat.Nombre</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoriaId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ej. Dell Latitude 5520, Tarjeta Arduino Uno" />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Especificaciones técnicas, accesorios incluidos, condición física..."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Estado" class="form-label fw-semibold"></label>
+                            <select asp-for="Estado" class="form-select">
+                                <option value="Disponible">Disponible</option>
+                                <option value="Prestado">Prestado</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i> Guardar Equipo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

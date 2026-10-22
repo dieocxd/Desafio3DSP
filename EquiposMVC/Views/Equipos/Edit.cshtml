@@ -1,0 +1,77 @@
+@model EquiposMVC.Models.EquipoEditViewModel
+@{
+    ViewData["Title"] = "Editar Equipo";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i>Editar Equipo</h4>
+                <small class="text-muted">Modifique los datos del equipo. El sistema cuenta con control de concurrencia optimista.</small>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <!-- Token de concurrencia optimista (RowVersion) -->
+                    <input type="hidden" asp-for="RowVersion" value="@(Model.RowVersion != null ? Convert.ToBase64String(Model.RowVersion) : "")" />
+
+                    <!-- Mensaje de error (incluye 409 si otro usuario modificó el equipo en simultáneo) -->
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="CodigoInventario" class="form-label fw-semibold"></label>
+                            <input asp-for="CodigoInventario" class="form-control" />
+                            <span asp-validation-for="CodigoInventario" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CategoriaId" class="form-label fw-semibold"></label>
+                            <select asp-for="CategoriaId" class="form-select">
+                                @foreach (var cat in Model.CategoriasDisponibles)
+                                {
+                                    <option value="@cat.Id" selected="@(Model.CategoriaId == cat.Id ? "selected" : null)">@cat.Nombre</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CategoriaId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Estado" class="form-label fw-semibold"></label>
+                            <select asp-for="Estado" class="form-select">
+                                <option value="Disponible" selected="@(Model.Estado == "Disponible" ? "selected" : null)">Disponible</option>
+                                <option value="Prestado" selected="@(Model.Estado == "Prestado" ? "selected" : null)">Prestado</option>
+                                <option value="Mantenimiento" selected="@(Model.Estado == "Mantenimiento" ? "selected" : null)">Mantenimiento</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
