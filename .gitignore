@@ -1,0 +1,9 @@
+## .gitignore for .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+appsettings.Development.json
+secrets.json
+.idea/
