@@ -1,12 +1,12 @@
 # Sistema Integral de Control y Préstamo de Equipos de Laboratorio
-### Universidad Don Bosco (UDB) - Facultad de Estudios Tecnológicos
-**Asignatura:** Programación de Servidores Web  
-**Ciclo:** 2026  
+### Universidad Don Bosco (UDB) - 
+**Asignatura:** Desarrollo de aplicaciones con software propietario
+**Ciclo:** 2 2026  
 
 ---
 
 ## Integrantes del Equipo
-* **Diego Cortez** — `DiegoCortez05` (`diegoluromero@gmail.com`)
+* **Diego Alejandro  Cortez Duran** — `CD231127` (`diegoluromero@gmail.com`)
 * **Carmen Abigail Granados Carmona** — `GC262440` (`gc262440@udb.edu.sv`)
 
 ---
@@ -164,7 +164,7 @@ En `EquiposReportes`, todas las operaciones son de solo lectura mediante el rol 
 
 ---
 
-## VIII. Entregables Generados
+##  Entregables aqui en github
 
 * `/EquiposAPI`: Proyecto Web API RESTful con EF Core Code-First y JWT.
 * `/EquiposMVC`: Proyecto Cliente ASP.NET Core MVC con Session y DelegatingHandler.
