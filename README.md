@@ -6,8 +6,8 @@
 ---
 
 ## Integrantes del Equipo
-* **Diego Alejandro  Cortez Duran** — `CD231127` (`diegoluromero@gmail.com`)
-* **Carmen Abigail Granados Carmona** — `GC262440` (`gc262440@udb.edu.sv`)
+* **Diego Alejandro  Cortez Duran** — `CD231127` (`cd231127@alumno.udb.edu.sv`)
+* **Carmen Abigail Granados Carmona** — `GC262440` (`gc262440@alumno.udb.edu.sv`)
 
 ---
 
